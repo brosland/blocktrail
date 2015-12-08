@@ -1,0 +1,24 @@
+{
+	"name": "brosland/blocktrail",
+	"description": "Nette extension for communication with blocktrail.com.",
+	"keywords": ["nette", "blocktrail.com", "brosland"],
+	"homepage": "http://bros.land",
+	"license": ["MIT"],
+	"authors": [
+		{
+			"name": "Martin Bros",
+			"email": "mbskot@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-0": {
+			"Brosland\\Blocktrail\\": "src/"
+		}
+	},
+	"minimum-stability": "dev",
+	"require": {
+		"php": ">= 5.5",
+		"nette/nette": "~2.3",
+		"blocktrail/blocktrail-sdk": "~1.2"
+	}
+}

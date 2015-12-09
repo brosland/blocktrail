@@ -12,7 +12,8 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 	 */
 	private static $DEFAULTS = [
 		'account' => [],
-		'wallet' => []
+		'wallet' => [],
+		'webhook' => []
 	];
 	/**
 	 * @var array
@@ -47,7 +48,8 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 			->setClass(Blocktrail::class)
 			->addSetup('setServiceLocator')
 			->addSetup('setAccountsServiceMap', [$accounts])
-			->addSetup('setWalletsServiceMap', [$wallets]);
+			->addSetup('setWalletsServiceMap', [$wallets])
+			->addSetup('setWebhooksMap', [$config['webhook']]);
 	}
 
 	/**

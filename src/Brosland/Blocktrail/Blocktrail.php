@@ -17,7 +17,7 @@ class Blocktrail extends \Nette\Object
 	/**
 	 * @var array
 	 */
-	private $accountsServiceMap = [], $walletsServiceMap = [];
+	private $accountsServiceMap = [], $walletsServiceMap = [], $webhooksMap = [];
 
 
 	/**
@@ -48,6 +48,15 @@ class Blocktrail extends \Nette\Object
 	}
 
 	/**
+	 * @internal
+	 * @param array $webhooks
+	 */
+	public function setWebhooksMap(array $webhooks)
+	{
+		$this->webhooksMap = $webhooks;
+	}
+
+	/**
 	 * @param string $name
 	 * @return \Blocktrail\SDK\BlocktrailSDK
 	 * @throws \Nette\InvalidArgumentException
@@ -75,5 +84,19 @@ class Blocktrail extends \Nette\Object
 		}
 
 		return $this->serviceLocator->getService($this->walletsServiceMap[$name]);
+	}
+
+	/**
+	 * @param string $name
+	 * @return string
+	 */
+	public function getWebhookId($name = self::DEFAULT_NAME)
+	{
+		if (!isset($this->webhooksMap[$name]))
+		{
+			throw new \Nette\InvalidArgumentException("Unknown webhook '$name'.");
+		}
+
+		return $this->webhooksMap[$name];
 	}
 }

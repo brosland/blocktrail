@@ -58,7 +58,7 @@ class Address extends \Nette\Object
 	 * 
 	 * @return int
 	 */
-	public function getbBalance()
+	public function getBalance()
 	{
 		return $this->data['balance'];
 	}

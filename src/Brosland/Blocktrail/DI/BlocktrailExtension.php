@@ -2,15 +2,19 @@
 
 namespace Brosland\Blocktrail\DI;
 
-use Brosland\Blocktrail\Blocktrail;
+use Brosland\Blocktrail\Blocktrail,
+	Nette\DI\CompilerExtension,
+	Nette\DI\Config\Helpers,
+	Nette\InvalidArgumentException;
 
-class BlocktrailExtension extends \Nette\DI\CompilerExtension
+class BlocktrailExtension extends CompilerExtension
 {
 
 	/**
 	 * @var array
 	 */
-	private static $DEFAULTS = [
+	private $defaults = [
+		'curl' => [],
 		'account' => [],
 		'wallet' => [],
 		'webhook' => []
@@ -18,7 +22,7 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 	/**
 	 * @var array
 	 */
-	private static $ACCOUNT_DEFAULTS = [
+	private $accountDefaults = [
 		'id' => NULL,
 		'secret' => NULL,
 		'network' => 'BTC',
@@ -29,7 +33,7 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 	/**
 	 * @var array
 	 */
-	private static $WALLET_DEFAULTS = [
+	private $walletDefaults = [
 		'account' => Blocktrail::DEFAULT_NAME
 	];
 
@@ -39,9 +43,9 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 		parent::loadConfiguration();
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig(self::$DEFAULTS);
+		$config = $this->getConfig($this->defaults);
 
-		$accounts = $this->loadAccounts($config['account']);
+		$accounts = $this->loadAccounts($config['account'], $config['curl']);
 		$wallets = $this->loadWallets($config['wallet']);
 
 		$builder->addDefinition($this->prefix('blocktrail'))
@@ -54,9 +58,10 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 
 	/**
 	 * @param array $definitions
+	 * @param string $curl The CURL options.
 	 * @return array
 	 */
-	private function loadAccounts($definitions)
+	private function loadAccounts(array $definitions, array $curl)
 	{
 		if (isset($definitions['key']))
 		{
@@ -68,7 +73,7 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 
 		foreach ($definitions as $name => $account)
 		{
-			$account = $this->mergeConfig($account, self::$ACCOUNT_DEFAULTS);
+			$account = $this->mergeConfig($account, $this->accountDefaults);
 			$serviceName = $this->prefix('account.' . $name);
 
 			$service = $builder->addDefinition($serviceName);
@@ -80,6 +85,11 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 				])
 				->setAutowired(empty($accounts));
 
+			foreach ($curl as $key => $value)
+			{
+				$service->addSetup('setCurlDefaultOption', [$key, $value]);
+			}
+
 			$accounts[$name] = $serviceName;
 		}
 
@@ -90,7 +100,7 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 	 * @param array $definitions
 	 * @return array
 	 */
-	private function loadWallets($definitions)
+	private function loadWallets(array $definitions)
 	{
 		if (isset($definitions['id']))
 		{
@@ -102,13 +112,13 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 
 		foreach ($definitions as $name => $wallet)
 		{
-			$wallet = $this->mergeConfig($wallet, self::$WALLET_DEFAULTS);
+			$wallet = $this->mergeConfig($wallet, $this->walletDefaults);
 			$accountServiceName = $this->prefix('account.' . $wallet['account']);
 			$serviceName = $this->prefix('wallet.' . $name);
 
 			if (!$builder->hasDefinition($accountServiceName))
 			{
-				throw new \Nette\InvalidArgumentException("The account '{$wallet['account']}' not found in configuration.");
+				throw new InvalidArgumentException("The account '{$wallet['account']}' not found in configuration.");
 			}
 
 			$service = $builder->addDefinition($serviceName);
@@ -132,7 +142,8 @@ class BlocktrailExtension extends \Nette\DI\CompilerExtension
 	 */
 	private function mergeConfig($config, $defaults)
 	{
-		return \Nette\DI\Config\Helpers::merge(
-				$config, $this->compiler->getContainerBuilder()->expand($defaults));
+		$builder = $this->compiler->getContainerBuilder();
+
+		return Helpers::merge($config, $builder->expand($defaults));
 	}
 }

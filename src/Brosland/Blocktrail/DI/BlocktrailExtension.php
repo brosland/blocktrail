@@ -23,17 +23,19 @@ class BlocktrailExtension extends CompilerExtension
 	 * @var array
 	 */
 	private $accountDefaults = [
-		'id' => NULL,
+		'key' => NULL,
 		'secret' => NULL,
 		'network' => 'BTC',
 		'testnet' => FALSE,
-		'version' => 'v1',
+		'version' => 'v3',
 		'endpoint' => NULL
 	];
 	/**
 	 * @var array
 	 */
 	private $walletDefaults = [
+		'id' => NULL,
+		'password' => NULL,
 		'account' => Blocktrail::DEFAULT_NAME
 	];
 
@@ -81,7 +83,8 @@ class BlocktrailExtension extends CompilerExtension
 					$account['key'],
 					$account['secret'],
 					$account['network'],
-					$account['testnet']
+					$account['testnet'],
+					$account['endpoint']
 				])
 				->setAutowired(empty($accounts));
 

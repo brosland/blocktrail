@@ -27,7 +27,7 @@ class BlocktrailExtension extends CompilerExtension
 		'secret' => NULL,
 		'network' => 'BTC',
 		'testnet' => FALSE,
-		'version' => 'v3',
+		'version' => \Blocktrail\SDK\Wallet::WALLET_VERSION_V3,
 		'endpoint' => NULL
 	];
 	/**
@@ -84,6 +84,7 @@ class BlocktrailExtension extends CompilerExtension
 					$account['secret'],
 					$account['network'],
 					$account['testnet'],
+					$account['version'],
 					$account['endpoint']
 				])
 				->setAutowired(empty($accounts));

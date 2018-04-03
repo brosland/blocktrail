@@ -17,7 +17,8 @@
 	},
 	"require": {
 		"php": ">= 5.6",
-		"nette/nette": "^2.4",
+		"nette/DI": "^2.4 || ^3.0",
+		"nette/utils": "^2.5 || ^3.0",
 		"blocktrail/blocktrail-sdk": "^v3.1"
 	}
 }

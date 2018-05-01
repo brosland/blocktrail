@@ -2,7 +2,7 @@
 
 namespace Brosland\Blocktrail;
 
-class Input extends \Nette\Object
+class Input
 {
 
 	/**

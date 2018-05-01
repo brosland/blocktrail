@@ -1,15 +1,8 @@
 {
-	"name": "brosland/blocktrail",
-	"description": "Nette extension for communication with blocktrail.com.",
-	"keywords": ["nette", "blocktrail.com", "brosland"],
-	"homepage": "http://bros.land",
+	"name": "brosland/btccom",
+	"description": "Nette extension for communication with btc.com.",
+	"keywords": ["nette", "btc.com"],
 	"license": ["MIT"],
-	"authors": [
-		{
-			"name": "Martin Bros",
-			"email": "mbskot@gmail.com"
-		}
-	],
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"autoload": {

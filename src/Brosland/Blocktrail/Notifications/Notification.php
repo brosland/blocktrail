@@ -2,7 +2,7 @@
 
 namespace Brosland\Blocktrail\Notifications;
 
-abstract class Notification extends \Nette\Object
+abstract class Notification
 {
 
 	const TYPE_ADDRESS = 'address-transactions', TYPE_BLOCK = 'block';

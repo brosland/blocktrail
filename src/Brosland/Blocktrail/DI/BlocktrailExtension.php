@@ -2,10 +2,12 @@
 
 namespace Brosland\Blocktrail\DI;
 
-use Brosland\Blocktrail\Blocktrail,
-	Nette\DI\CompilerExtension,
-	Nette\DI\Config\Helpers,
-	Nette\InvalidArgumentException;
+use Blocktrail\SDK\BlocktrailSDK;
+use Blocktrail\SDK\Wallet;
+use Brosland\Blocktrail\Blocktrail;
+use InvalidArgumentException;
+use Nette\DI\CompilerExtension;
+use Nette\PhpGenerator\Helpers;
 
 class BlocktrailExtension extends CompilerExtension
 {
@@ -14,29 +16,29 @@ class BlocktrailExtension extends CompilerExtension
 	 * @var array
 	 */
 	private $defaults = [
-		'curl' => [],
-		'account' => [],
-		'wallet' => [],
-		'webhook' => []
+			'curl' => [],
+			'account' => [],
+			'wallet' => [],
+			'webhook' => []
 	];
 	/**
 	 * @var array
 	 */
 	private $accountDefaults = [
-		'key' => NULL,
-		'secret' => NULL,
-		'network' => 'BTC',
-		'testnet' => FALSE,
-		'version' => \Blocktrail\SDK\Wallet::WALLET_VERSION_V3,
-		'endpoint' => NULL
+			'key' => NULL,
+			'secret' => NULL,
+			'network' => 'BTC',
+			'testnet' => FALSE,
+			'version' => Wallet::WALLET_VERSION_V1,
+			'endpoint' => NULL
 	];
 	/**
 	 * @var array
 	 */
 	private $walletDefaults = [
-		'id' => NULL,
-		'password' => NULL,
-		'account' => Blocktrail::DEFAULT_NAME
+			'id' => NULL,
+			'password' => NULL,
+			'account' => Blocktrail::DEFAULT_NAME
 	];
 
 
@@ -79,13 +81,14 @@ class BlocktrailExtension extends CompilerExtension
 			$serviceName = $this->prefix('account.' . $name);
 
 			$service = $builder->addDefinition($serviceName);
-			$service->setClass(\Blocktrail\SDK\BlocktrailSDK::class, [
-					$account['key'],
-					$account['secret'],
-					$account['network'],
-					$account['testnet'],
-					$account['version'],
-					$account['endpoint']
+			$service->setClass(BlocktrailSDK::class,
+					[
+						$account['key'],
+						$account['secret'],
+						$account['network'],
+						$account['testnet'],
+						$account['version'],
+						$account['endpoint']
 				])
 				->setAutowired(empty($accounts));
 
@@ -122,14 +125,17 @@ class BlocktrailExtension extends CompilerExtension
 
 			if (!$builder->hasDefinition($accountServiceName))
 			{
-				throw new InvalidArgumentException("The account '{$wallet['account']}' not found in configuration.");
+				$error = "The account '{$wallet['account']}' not found in configuration.";
+
+				throw new InvalidArgumentException($error);
 			}
 
 			$service = $builder->addDefinition($serviceName);
 			$service->setClass(\Blocktrail\SDK\Wallet::class)
-				->setFactory('@' . $accountServiceName . '::initWallet', [
-					$wallet['id'],
-					$wallet['password']
+				->setFactory('@' . $accountServiceName . '::initWallet',
+					[
+						$wallet['id'],
+						$wallet['password']
 				])
 				->setAutowired(empty($wallets));
 

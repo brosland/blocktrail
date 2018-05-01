@@ -2,9 +2,10 @@
 
 namespace Brosland\Blocktrail;
 
+use DateTimeImmutable;
 use Nette\Utils\DateTime;
 
-class Transaction extends \Nette\Object
+class Transaction
 {
 
 	/**
@@ -47,9 +48,12 @@ class Transaction extends \Nette\Object
 		unset($data['inputs']);
 		unset($data['outputs']);
 
-		$data['first_seen_at'] = DateTime::createFromFormat(DateTime::ATOM, $data['first_seen_at']);
-		$data['last_seen_at'] = DateTime::createFromFormat(DateTime::ATOM, $data['last_seen_at']);
-		$data['block_time'] = DateTime::createFromFormat(DateTime::ATOM, $data['block_time']);
+		$data['time'] = DateTimeImmutable::createFromFormat(
+				DateTime::ATOM, $data['time']
+		);
+		$data['block_time'] = DateTimeImmutable::createFromFormat(
+				DateTime::ATOM, $data['block_time']
+		);
 
 		$transaction->data = $data;
 
@@ -57,11 +61,11 @@ class Transaction extends \Nette\Object
 	}
 
 	/**
-	 * @return string
+	 * @return int
 	 */
-	public function getRaw()
+	public function getSize()
 	{
-		return $this->data['raw'];
+		return $this->data['size'];
 	}
 
 	/**
@@ -77,22 +81,19 @@ class Transaction extends \Nette\Object
 	/**
 	 * The UTC timestamp when the transaction was first seen by BlockTrail.
 	 * 
-	 * @return DateTime
+	 * @return DateTimeImmutable
 	 */
-	public function getFirstSeenAt()
+	public function getTime()
 	{
-		return $this->data['first_seen_at'];
+		return $this->data['time'];
 	}
 
 	/**
-	 * The UTC timestamp when the transaction was last propagated through the network
-	 * and seen by BlockTrail.
-	 * 
-	 * @return DateTime
+	 * @return DateTimeImmutable
 	 */
-	public function getLastSeenAt()
+	public function getBlockTime()
 	{
-		return $this->data['last_seen_at'];
+		return $this->data['block_time'];
 	}
 
 	/**
@@ -105,17 +106,6 @@ class Transaction extends \Nette\Object
 	public function getBlockHeight()
 	{
 		return $this->data['block_height'];
-	}
-
-	/**
-	 * The UTC timestamp the block containing the transaction was created by the miner.
-	 * An unconfirmed transaction will have a null block_time.
-	 * 
-	 * @return DateTime
-	 */
-	public function getBlockTime()
-	{
-		return $this->data['block_time'];
 	}
 
 	/**
@@ -153,17 +143,6 @@ class Transaction extends \Nette\Object
 	}
 
 	/**
-	 * The total estimated value of the transaction in Satoshi, calculated
-	 * as the sum of all output values minus the estimated change amount.
-	 * 
-	 * @return int
-	 */
-	public function getEstimatedValue()
-	{
-		return $this->data['estimated_value'];
-	}
-
-	/**
 	 * The total value of all the inputs in Satoshi.
 	 * 
 	 * @return int
@@ -194,53 +173,92 @@ class Transaction extends \Nette\Object
 	}
 
 	/**
-	 * The total estimated change for this transaction in Satoshi.
-	 * 
+	 * @return bool
+	 */
+	public function getOptInRbf()
+	{
+		return $this->data['opt_in_rbf'];
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isDoubleSpend()
+	{
+		return isset($this->data['is_double_spend']) ?
+			$this->data['is_double_spend'] : FALSE;
+	}
+
+	/**
+	 * @return int|NULL
+	 */
+	public function getLockTimeTimestamp()
+	{
+		return $this->data['lock_time_timestamp'];
+	}
+
+	/**
+	 * @return int|NULL
+	 */
+	public function getLockTimeBlockHeight()
+	{
+		return $this->data['lock_time_block_height'];
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isSwTx()
+	{
+		return $this->data['is_sw_tx'];
+	}
+
+	/**
 	 * @return int
 	 */
-	public function getEstimatedChange()
+	public function getWeight()
 	{
-		return $this->data['estimated_change'];
+		return $this->data['weight'];
 	}
 
 	/**
-	 * The estimated change address for this transaction.
-	 * 
 	 * @return string
 	 */
-	public function getEstimatedChangeAddress()
+	public function getWitnessHash()
 	{
-		return $this->data['estimated_change_address'];
+		return $this->data['witness_hash'];
 	}
 
 	/**
-	 * Indicates if this transaction is considered "high priority"
-	 * 
-	 * @return bool
+	 * @return int
 	 */
-	public function hasHighPriority()
+	public function getLockTime()
 	{
-		return $this->data['high_priority'];
+		return $this->data['lock_time'];
 	}
 
 	/**
-	 * Indicates if the transaction includes the minimum required fee according to the Bitcoin protocol.
-	 * 
-	 * @return bool
+	 * @return int
 	 */
-	public function hasEnoughFee()
+	public function getSigops()
 	{
-		return $this->data['enough_fee'];
+		return $this->data['sigops'];
 	}
 
 	/**
-	 * Indicates if the transaction contains "dust" according to the Bitcoin protocol.
-	 * 
-	 * @return bool
+	 * @return int
 	 */
-	public function isContainsDust()
+	public function getVersion()
 	{
-		return $this->data['contains_dust'];
+		return $this->data['version'];
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRaw()
+	{
+		return $this->data['raw'];
 	}
 
 	/**
@@ -261,24 +279,6 @@ class Transaction extends \Nette\Object
 	public function getOutputs()
 	{
 		return $this->outputs;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isDoubleSpend()
-	{
-		return isset($this->data['is_double_spend']) ?
-			$this->data['is_double_spend'] : FALSE;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getDoubleSpendIn()
-	{
-		return isset($this->data['double_spend_in']) ?
-			$this->data['double_spend_in'] : [];
 	}
 
 	/**

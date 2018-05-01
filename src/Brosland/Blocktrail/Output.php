@@ -2,7 +2,7 @@
 
 namespace Brosland\Blocktrail;
 
-class Output extends \Nette\Object
+class Output
 {
 
 	/**

@@ -2,9 +2,12 @@
 
 namespace Brosland\Blocktrail;
 
+use Blocktrail\SDK\BlocktrailSDK;
+use Blocktrail\SDK\Wallet;
+use InvalidArgumentException;
 use Nette\DI\Container;
 
-class Blocktrail extends \Nette\Object
+class Blocktrail
 {
 
 	const DEFAULT_NAME = 'default';
@@ -58,14 +61,14 @@ class Blocktrail extends \Nette\Object
 
 	/**
 	 * @param string $name
-	 * @return \Blocktrail\SDK\BlocktrailSDK
-	 * @throws \Nette\InvalidArgumentException
+	 * @return BlocktrailSDK
+	 * @throws InvalidArgumentException
 	 */
 	public function getAccount($name = self::DEFAULT_NAME)
 	{
 		if (!isset($this->accountsServiceMap[$name]))
 		{
-			throw new \Nette\InvalidArgumentException("Unknown account '$name'.");
+			throw new InvalidArgumentException("Unknown account '$name'.");
 		}
 
 		return $this->serviceLocator->getService($this->accountsServiceMap[$name]);
@@ -73,14 +76,14 @@ class Blocktrail extends \Nette\Object
 
 	/**
 	 * @param string $name
-	 * @return \Blocktrail\SDK\Wallet
-	 * @throws \Nette\InvalidArgumentException
+	 * @return Wallet
+	 * @throws InvalidArgumentException
 	 */
 	public function getWallet($name = self::DEFAULT_NAME)
 	{
 		if (!isset($this->walletsServiceMap[$name]))
 		{
-			throw new \Nette\InvalidArgumentException("Unknown wallet '$name'.");
+			throw new InvalidArgumentException("Unknown wallet '$name'.");
 		}
 
 		return $this->serviceLocator->getService($this->walletsServiceMap[$name]);
@@ -94,7 +97,7 @@ class Blocktrail extends \Nette\Object
 	{
 		if (!isset($this->webhooksMap[$name]))
 		{
-			throw new \Nette\InvalidArgumentException("Unknown webhook '$name'.");
+			throw new InvalidArgumentException("Unknown webhook '$name'.");
 		}
 
 		return $this->webhooksMap[$name];

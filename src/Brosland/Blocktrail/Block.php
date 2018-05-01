@@ -2,9 +2,10 @@
 
 namespace Brosland\Blocktrail;
 
+use DateTimeImmutable;
 use Nette\Utils\DateTime;
 
-class Block extends \Nette\Object
+class Block
 {
 
 	/**
@@ -24,8 +25,12 @@ class Block extends \Nette\Object
 	 */
 	public static function createFromArray(array $data)
 	{
-		$data['block_time'] = DateTime::createFromFormat(DateTime::ATOM, $data['block_time']);
-		$data['arrival_time'] = DateTime::createFromFormat(DateTime::ATOM, $data['arrival_time']);
+		$data['block_time'] = DateTimeImmutable::createFromFormat(
+			DateTime::ATOM, $data['block_time']
+		);
+		$data['arrival_time'] = DateTimeImmutable::createFromFormat(
+			DateTime::ATOM, $data['arrival_time']
+		);
 
 		$block = new Block();
 		$block->data = $data;
@@ -56,7 +61,7 @@ class Block extends \Nette\Object
 	/**
 	 * The UTC timestamp when the block was created by the miner.
 	 * 
-	 * @return DateTime
+	 * @return DateTimeImmutable
 	 */
 	public function getBlockTime()
 	{
@@ -66,7 +71,7 @@ class Block extends \Nette\Object
 	/**
 	 * The UTC timestamp when the block was first received by our server.
 	 * 
-	 * @return DateTime
+	 * @return DateTimeImmutable
 	 */
 	public function getArrivalTime()
 	{

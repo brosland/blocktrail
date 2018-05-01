@@ -4,7 +4,7 @@ namespace Brosland\Blocktrail;
 
 use Nette\Utils\DateTime;
 
-class Address extends \Nette\Object
+class Address
 {
 
 	/**

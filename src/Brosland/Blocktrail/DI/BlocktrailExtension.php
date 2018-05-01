@@ -7,7 +7,7 @@ use Blocktrail\SDK\Wallet;
 use Brosland\Blocktrail\Blocktrail;
 use InvalidArgumentException;
 use Nette\DI\CompilerExtension;
-use Nette\PhpGenerator\Helpers;
+use Nette\DI\Config\Helpers;
 
 class BlocktrailExtension extends CompilerExtension
 {

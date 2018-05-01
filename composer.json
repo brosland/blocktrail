@@ -1,7 +1,7 @@
 {
-	"name": "brosland/btccom",
+	"name": "brosland/blocktrail",
 	"description": "Nette extension for communication with btc.com.",
-	"keywords": ["nette", "btc.com"],
+	"keywords": ["nette", "btc.com", "blocktrail"],
 	"license": ["MIT"],
 	"minimum-stability": "dev",
 	"prefer-stable": true,

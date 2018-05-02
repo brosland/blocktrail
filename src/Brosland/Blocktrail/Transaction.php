@@ -48,12 +48,19 @@ class Transaction
 		unset($data['inputs']);
 		unset($data['outputs']);
 
-		$data['time'] = DateTimeImmutable::createFromFormat(
-				DateTime::ATOM, $data['time']
-		);
-		$data['block_time'] = DateTimeImmutable::createFromFormat(
-				DateTime::ATOM, $data['block_time']
-		);
+		if (isset($data['time']) && $data['time'] !== NULL)
+		{
+			$data['time'] = DateTimeImmutable::createFromFormat(
+					DateTime::ATOM, $data['time']
+			);
+		}
+
+		if (isset($data['block_time']) && $data['block_time'] !== NULL)
+		{
+			$data['block_time'] = DateTimeImmutable::createFromFormat(
+					DateTime::ATOM, $data['block_time']
+			);
+		}
 
 		$transaction->data = $data;
 
